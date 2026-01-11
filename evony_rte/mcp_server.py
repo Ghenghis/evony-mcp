@@ -1223,8 +1223,8 @@ def handle_client_search(args: Dict) -> Dict:
                                 })
                                 if len(results) >= 50:
                                     break
-                except:
-                    pass
+                except (IOError, UnicodeDecodeError) as e:
+                    logger.debug(f"File read error: {e}")
                 if len(results) >= 50:
                     break
     
@@ -1278,13 +1278,15 @@ def handle_exploit_test(args: Dict) -> Dict:
 def handle_game_status(args: Dict) -> Dict:
     """Check bot server status - auto-starts if not running."""
     import urllib.request
+    import urllib.error
     
     def check_bot_server():
         try:
             req = urllib.request.Request("http://localhost:9999/api/status")
             resp = urllib.request.urlopen(req, timeout=5)
             return json.loads(resp.read().decode())
-        except:
+        except (urllib.error.URLError, json.JSONDecodeError, TimeoutError) as e:
+            logger.debug(f"Bot server check failed: {e}")
             return None
     
     # First check
@@ -1369,8 +1371,8 @@ def handle_xref_client_server(args: Dict) -> Dict:
                                     "file": str(f.relative_to(AS3_SCRIPTS)),
                                     "type": "amf3_command"
                                 })
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
     
     results["total"] = len(results["mappings"])
     return results
@@ -1403,8 +1405,8 @@ def handle_xref_packet_handler(args: Dict) -> Dict:
                                 })
                             if len(results["handlers"]) + len(results["dispatchers"]) >= 20:
                                 break
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
     
     return results
 
@@ -1451,8 +1453,8 @@ def handle_xref_validation(args: Dict) -> Dict:
                                 break
                         if len(results["client_validations"]) >= 30:
                             break
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
     
     # Identify potential bypasses (client-only checks)
     if results["client_validations"] and not results["server_validations"]:
@@ -1513,8 +1515,8 @@ def handle_analyze_protocol(args: Dict) -> Dict:
                     for r in related:
                         if r != cmd and r not in results["related_commands"]:
                             results["related_commands"].append(r)
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
     
     return results
 
@@ -1555,8 +1557,8 @@ def handle_find_vulnerabilities(args: Dict) -> Dict:
                                     "line": line_num,
                                     "match": match.group()[:50]
                                 })
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
             
             if len(results["vulnerabilities"]) >= 50:
                 break
@@ -1662,8 +1664,8 @@ def handle_exploit_scan(args: Dict) -> Dict:
                                     "severity": "MEDIUM",
                                     "description": f"Client-side {check_type} found - verify server validates"
                                 })
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
     
     # Add recommendations
     if results["vulnerabilities"]:
@@ -1817,8 +1819,8 @@ def handle_client_callgraph(args: Dict) -> Dict:
                         
                         if len(results["called_by"]) >= 20:
                             break
-        except:
-            pass
+        except Exception as e:
+            logger.debug(f"Operation failed: {e}")
     
     # Deduplicate
     results["calls"] = results["calls"][:depth * 5]
@@ -2371,8 +2373,8 @@ def handle_game_send(args: Dict) -> Dict:
         bot = get_bot_server()
         if bot.running:
             return bot.send_command(cmd, data)
-    except:
-        pass
+    except Exception as e:
+        logger.debug(f"Operation failed: {e}")
     
     # Fall back to external bot server
     try:
@@ -2450,8 +2452,8 @@ def handle_client_strings(args: Dict) -> Dict:
                         })
                         if len(strings) >= 500:
                             break
-            except:
-                pass
+            except Exception as e:
+                logger.debug(f"Operation failed: {e}")
             if len(strings) >= 500:
                 break
     
@@ -2519,7 +2521,8 @@ def handle_bot_health(args: Dict) -> Dict:
             req = urllib.request.Request("http://localhost:9999/api/status")
             resp = urllib.request.urlopen(req, timeout=5)
             return json.loads(resp.read().decode())
-        except:
+        except Exception as e:
+            logger.debug(f"Operation failed: {e}")
             return None
     
     server_data = check_server()
@@ -2560,7 +2563,8 @@ def handle_bot_health(args: Dict) -> Dict:
         sock.connect(("localhost", 9999))
         sock.close()
         result["checks"]["port"] = {"status": "ok", "port": 9999}
-    except:
+    except (socket.error, socket.timeout, OSError) as e:
+        logger.debug(f"Port check failed: {e}")
         result["checks"]["port"] = {"status": "closed", "port": 9999}
     
     return result
@@ -2773,8 +2777,8 @@ class MCPServer:
         
         if method == "initialize":
             self.send_response(req_id, {
-                "protocolVersion": "2025-06-18",
-                "serverInfo": {"name": "evony-rte", "version": "1.0.0"},
+                "protocolVersion": "2025-03-26",
+                "serverInfo": {"name": "evony-rte", "version": "2.0.0"},
                 "capabilities": {"tools": {"listChanged": True}}
             })
         

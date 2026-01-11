@@ -137,7 +137,9 @@ Context:
             )
             response.raise_for_status()
             return response.json()["choices"][0]["message"]["content"]
-        except:
+        except (requests.RequestException, KeyError, IndexError) as e:
+            import logging
+            logging.getLogger(__name__).debug(f"LMStudio call failed: {e}")
             return None
     
     def _generate_standalone(self, query: str, 
@@ -342,7 +344,9 @@ Context:
                 lines = lines[start_line-1:]
             
             return ''.join(lines)
-        except:
+        except (FileNotFoundError, IOError, UnicodeDecodeError) as e:
+            import logging
+            logging.getLogger(__name__).debug(f"File read failed: {e}")
             return None
     
     def get_stats(self) -> Dict:

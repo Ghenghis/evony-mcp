@@ -87,8 +87,9 @@ class PolicyEngine:
             try:
                 with open(self.policy_path, 'r') as f:
                     return yaml.safe_load(f)
-            except:
-                pass
+            except (yaml.YAMLError, IOError) as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Policy load failed, using defaults: {e}")
         return self.DEFAULT_POLICY
     
     def _compile_patterns(self):

@@ -1,0 +1,33 @@
+graph TD
+    subgraph User
+        A[Claude/Windsurf IDE]
+    end
+
+    subgraph "Evony MCP Servers"
+        B[evony_rag MCP Server]
+        C[evony_rte MCP Server]
+    end
+
+    subgraph "Knowledge Base"
+        D[Code Chunks]
+        E[Embeddings]
+        F[Knowledge Graph]
+    end
+
+    subgraph "Game Client & Network"
+        G[Evony Game Client]
+        H[Game Server]
+    end
+
+    A -- MCP --> B
+    A -- MCP --> C
+
+    B -- Hybrid Search --> D
+    B -- Semantic Search --> E
+    B -- Concept Trace --> F
+
+    C -- Packet Injection --> H
+    C -- Exploit Testing --> H
+    C -- Client Analysis --> G
+
+    G <--> H

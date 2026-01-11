@@ -1,0 +1,29 @@
+graph TD
+    subgraph User Input
+        A[User Query]
+    end
+
+    subgraph "evony_rag: Policy Engine"
+        B{Policy Evaluation}
+        A --> B
+        B -- Blocked --> C[Return Error]
+        B -- Allowed --> D{Retrieval Config}
+    end
+
+    subgraph "evony_rag: Hybrid Search"
+        D --> E[BM25 Lexical Search]
+        D --> F[Embedding Semantic Search]
+        E --> G{Reciprocal Rank Fusion}
+        F --> G
+    end
+
+    subgraph "evony_rag: Generation"
+        G -- Fused Results --> H[Format Context]
+        H --> I{"LLM Call (LM Studio)"}
+        I --> J[Generate Answer]
+    end
+
+    subgraph "Final Response"
+        J --> K[Formatted Answer]
+        G -- Citations --> K
+    end

@@ -162,7 +162,9 @@ class BM25Index:
             for k, v in data['inverted_index'].items():
                 self.inverted_index[k] = [tuple(x) for x in v]
             return True
-        except:
+        except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
+            import logging
+            logging.getLogger(__name__).debug(f"BM25 index load failed: {e}")
             return False
 
 
@@ -236,7 +238,9 @@ class SymbolIndex:
                 data = json.load(f)
             self.symbols = defaultdict(list, data)
             return True
-        except:
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            import logging
+            logging.getLogger(__name__).debug(f"Symbol index load failed: {e}")
             return False
 
 
@@ -257,7 +261,7 @@ class HybridSearch:
             with open(index_path / 'chunks.json', 'r') as f:
                 self.chunks = json.load(f)
             
-            # Load embeddings from G:\ (large index location)
+            # Load embeddings from LARGE_INDEX_PATH (configurable via EVONY_INDEX_PATH env var)
             from .config import LARGE_INDEX_PATH
             embeddings_path = LARGE_INDEX_PATH / 'embeddings.npy'
             if embeddings_path.exists():

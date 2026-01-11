@@ -351,7 +351,7 @@ def handle_request(request: Dict) -> Dict:
         if method == "initialize":
             logger.info("Initialize request received")
             # Match client protocol version
-            client_version = params.get("protocolVersion", "2024-11-05")
+            client_version = params.get("protocolVersion", "2025-03-26")
             logger.info(f"Client protocol: {client_version}")
             return {
                 "jsonrpc": "2.0",
