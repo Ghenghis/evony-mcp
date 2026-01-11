@@ -4,14 +4,27 @@ The evony-rte MCP server integrates with these command-line tools for reverse en
 
 ## Included Tools (in `tools/` folder)
 
-| Tool           | Size      | Description                             |
-| -------------- | --------- | --------------------------------------- |
-| `RABCDAsm.zip` | 0.13 MB   | ABC bytecode disassembly/assembly       |
-| `FFDec.zip`    | 16.2 MB   | Flash SWF decompiler (JPEXS)            |
-| `SWFTools.zip` | 24.5 MB   | SWF manipulation utilities (swfextract) |
-| `Graphviz.zip` | 9.7 MB    | Flow diagram generation (dot)           |
-| `Radare2.zip`  | 9.4 MB    | Advanced binary analysis (r2)           |
-| **Total**      | **60 MB** | All CLI tools for evony-rte MCP         |
+| Tool             | Size       | Description                             |
+| ---------------- | ---------- | --------------------------------------- |
+| `Java21-JRE.zip` | 47 MB      | OpenJDK 21 JRE (required for FFDec)     |
+| `RABCDAsm.zip`   | 0.13 MB    | ABC bytecode disassembly/assembly       |
+| `FFDec.zip`      | 16.2 MB    | Flash SWF decompiler (JPEXS)            |
+| `SWFTools.zip`   | 24.5 MB    | SWF manipulation utilities (swfextract) |
+| `Graphviz.zip`   | 9.7 MB     | Flow diagram generation (dot)           |
+| `Radare2.zip`    | 9.4 MB     | Advanced binary analysis (r2)           |
+| **Total**        | **107 MB** | All CLI tools for evony-rte MCP         |
+
+### Java 21 JRE (Required)
+**Archive:** `tools/Java21-JRE.zip`
+
+OpenJDK 21 runtime required for FFDec and other Java-based tools.
+
+**Extract and set PATH:**
+```powershell
+Expand-Archive tools/Java21-JRE.zip -DestinationPath C:\Tools\Java21
+$env:JAVA_HOME = "C:\Tools\Java21\jdk-21.0.5+11-jre"
+$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+```
 
 ### RABCDAsm (ABC Bytecode Tools)
 **Archive:** `tools/RABCDAsm.zip`
